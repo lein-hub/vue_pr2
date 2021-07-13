@@ -9,23 +9,32 @@
 </head>
 <body>
     <div id="root">
-        <div>
-            {{ word }}
-        </div>
-        <form v-on:submit="onSubmitForm">
-            <input type="text" v-model="value" ref="input">
-            <button type="submit">입력</button>
-        </form>
-        <div>{{ result }}</div>
+        <word-relay start-word="하이"></word-relay>
+        <word-relay start-word="몽골"></word-relay>
+        <word-relay start-word="복수"></word-relay>
     </div>
 </body>
 <script>
-    const app = new Vue ({
-        el: '#root',
-        data: {
-            word: '제로초',
-            result: '',
-            value: '',
+    Vue.component('wordRelay', {
+        template: `
+            <div>
+                <div>
+                    {{ word }}
+                </div>
+                <form v-on:submit="onSubmitForm">
+                    <input type="text" v-model="value" ref="input">
+                    <button type="submit">입력</button>
+                </form>
+                <div>{{ result }}</div>
+            </div>
+        `,
+        props: ['startWord'],
+        data() {
+            return {
+                word: this.startWord,
+                result: '',
+                value: '',
+            };
         },
         methods: {
             onSubmitForm(e) {
@@ -41,6 +50,17 @@
                     this.$refs.input.focus();
                 }
             }
+        },
+    });
+</script>
+<script>
+    const app = new Vue ({
+        el: '#root',
+        data: {
+            
+        },
+        methods: {
+            
         },
     })
 </script>
