@@ -32,9 +32,9 @@ export default {
     data() {
         return {
             answer: getNumbers(),
-            tries: [],
-            value: '',
-            result: '',
+            tries: [], // 시도 수
+            value: '', // 입력
+            result: '', // 결과
         }
     },
     methods: {
@@ -48,20 +48,27 @@ export default {
                 alert('게임을 다시 실행합니다');
                 this.tries = [];
             } else {
-                let strike = 0;
-                let ball = 0;
-                const answerArray = this.value.split('').map(v => parseInt(v));
-                for (let i = 0; i < 4; i++) {
-                    if (answerArray[i] === this.answer[i]) { // 숫자, 자릿수 모두 정답
-                        strike++;
-                    } else if (this.answer.includes(answerArray[i])) { // 숫자만 정답
-                        ball++;
+                if (this.tries.length >= 9) {
+                    this.result = `10번 넘게 틀려서 실패! 답은 ${this.answer.join('')}였습니다!`;
+                    alert('게임을 다시 실행합니다');
+                    this.tries = [];
+                } else {
+                    let strike = 0;
+                    let ball = 0;
+                    const answerArray = this.value.split('').map(v => parseInt(v));
+                    for (let i = 0; i < 4; i++) {
+                        if (answerArray[i] === this.answer[i]) { // 숫자, 자릿수 모두 정답
+                            strike++;
+                        } else if (this.answer.includes(answerArray[i])) { // 숫자만 정답
+                            ball++;
+                        }
                     }
+                    this.tries.push({
+                        try: this.value,
+                        result: `${strike} 스트라이크 ${ball} 볼`,
+                    });
                 }
-                this.tries.push({
-                    try: this.value,
-                    result: `${strike} 스트라이크 ${ball} 볼`,
-                });
+                
                 
             }
             this.$refs.answer.focus();
