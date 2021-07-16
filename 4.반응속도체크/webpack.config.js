@@ -28,5 +28,12 @@ module.exports = {
     output: {
         filename: 'app.js',
         path: path.join(__dirname, 'dist'),
+        publicPath: '/dist',
+    },
+    devServer: {
+        inline: true,
+        hot: true,
+        host: "localhost",
+        port: 5500
     },
 };
