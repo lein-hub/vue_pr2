@@ -6,7 +6,7 @@
         </div>
         <div>보너스</div>
         <lotto-ball v-if="bonus" :number="bonus"></lotto-ball>
-        <button v-if="redo">다시하기</button>
+        <button v-if="redo" @click="onSubmitButton">다시하기</button>
     </div>
 </template>
 
@@ -39,18 +39,27 @@ export default {
         
     },
     methods: {
-        
+        onSubmitButton() {
+            this.winBalls = [];
+            this.bonus = null;
+            this.redo = false;
+            this.winNumbers = getWinNumbers();
+            this.generateBalls();
+        },
+        generateBalls() {
+            for (let i=0; i < this.winNumbers.length - 1; i++) {
+                setTimeout(() => {
+                    this.winBalls.push(this.winNumbers[i]);
+                }, (i + 1) * 1000);
+            }
+            setTimeout(() => {
+                this.bonus = this.winNumbers[6];
+                this.redo = true;
+            }, 7000);
+        },
     },
     mounted() {
-        for (let i=0; i < this.winNumbers.length - 1; i++) {
-            setTimeout(() => {
-                this.winBalls.push(this.winNumbers[i]);
-            }, (i + 1) * 1000);
-        }
-        setTimeout(() => {
-            this.bonus = this.winNumbers[6];
-            this.redo = true;
-        }, 7000);
+        this.generateBalls();
     },
     beforeDestroy() {
         

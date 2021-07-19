@@ -1,5 +1,5 @@
 <template>
-    <div class="ball" :style="{background}">
+    <div class="ball" :style="background">
         {{ number }}
     </div>
 </template>
@@ -8,9 +8,28 @@
 export default {
     name: 'LottoBall',
     props: ['number'],
+    computed : {
+        background() {
+            let background;
+            if (this.number < 10) {
+                background = 'red';
+            } else if (this.number < 20) {
+                background = 'orange';
+            } else if (this.number < 30) {
+                background = 'yellow';
+            } else if (this.number < 40) {
+                background = 'blue';
+            } else if (this.number < 50) {
+                background = 'green';
+            }
+
+            return {background};
+        }
+        
+    },
     data() {
         return {
-            background,
+
         }
     }
 }
