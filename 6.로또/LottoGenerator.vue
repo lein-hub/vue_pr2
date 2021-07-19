@@ -13,6 +13,7 @@
 <script>
 import LottoBall from './LottoBall.vue';
 
+const timeouts = [];
 function getWinNumbers() {
     console.log('getWinNumbers');
     const candidate = Array(45).fill().map((v, i) => i + 1);
@@ -48,11 +49,11 @@ export default {
         },
         generateBalls() {
             for (let i=0; i < this.winNumbers.length - 1; i++) {
-                setTimeout(() => {
+                timeouts[i] = setTimeout(() => {
                     this.winBalls.push(this.winNumbers[i]);
                 }, (i + 1) * 1000);
             }
-            setTimeout(() => {
+            timeouts[6] = setTimeout(() => {
                 this.bonus = this.winNumbers[6];
                 this.redo = true;
             }, 7000);
@@ -62,7 +63,9 @@ export default {
         this.generateBalls();
     },
     beforeDestroy() {
-        
+        timeouts.forEach((t) => {
+            clearTimeout(t);
+        });
     },
     watch: {
 
