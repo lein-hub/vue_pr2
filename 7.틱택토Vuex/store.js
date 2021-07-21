@@ -21,7 +21,9 @@ export default new Vuex.Store({
         winner: '',
     }, // vue의 data
     getters: {
-
+        turnMessage(state) {
+            return state.turn + '님이 승리하셨습니다.';
+        }
     }, // vue의 computed
     mutations: {
         [SET_WINNER](state, winner) {
