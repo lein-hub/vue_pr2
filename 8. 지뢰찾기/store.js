@@ -82,10 +82,36 @@ export default new Vuex.Store({
             state.halted = false; 
         },
         [OPEN_CELL] (state, {row, col}) {
-            Vue.set(state.tableData[row], col, CODE.OPENED);
-        },
-        [CLICK_MINE] (state) {
+            function checkAround() {  // 주변 8칸 지뢰인지 검색
+                let around = [];
+                for (let i = -1; i < 2; i++) {
+                    for (let j = -1; j < 2; j++) {
+                        if (i === 0 && j === 0) {
+                            continue;
+                        }
+                        if (state.tableData[row + i] && state.tableData[row + i][col + j]) {
+                            around = around.concat(state.tableData[row + i][col + j]);
+                        }
+                    }
+                }
+                const count = around.filter(
+                    function(v) {
+                        return [CODE.MINE, CODE.FLAG_MINE, CODE.QUESTION_MINE].includes(v);
+                    }
+                ).length;
 
+                return count;
+            };
+
+            const count = checkAround();
+            console.log(count);
+
+            Vue.set(state.tableData[row], col, count);
+        },
+        [CLICK_MINE] (state, {row, col}) {
+            state.halted = true;
+            state.result = '게임 오버';
+            Vue.set(state.tableData[row], col, CODE.CLICKED_MINE);
         },
         [FLAG_CELL] (state, {row, col}) {
             if (state.tableData[row][col] === CODE.MINE) {
