@@ -1,6 +1,6 @@
 <template>
     <table>
-        <tr-component v-for="(rowData, i) in tableData" :key="i" :row-data="rowData" :row-index="i"></tr-component>
+        <slot></slot>
     </table>
 </template>
 
