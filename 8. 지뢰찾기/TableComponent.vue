@@ -60,7 +60,7 @@ export default {
                     case CODE.QUESTION_MINE: return '?';
                     case CODE.CLICKED_MINE: return '펑';
                     case CODE.OPENED:
-                    default: return this.$store.state.tableData[row][cell];
+                    default: return this.$store.state.tableData[row][cell] || '';
                 }
             }
         },

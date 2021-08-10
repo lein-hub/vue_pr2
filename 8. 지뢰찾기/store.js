@@ -82,7 +82,18 @@ export default new Vuex.Store({
             state.halted = false; 
         },
         [OPEN_CELL] (state, {row, col}) {
+            const checked = [];
+
             function checkAround() {  // 주변 8칸 지뢰인지 검색
+                console.log('checkAround Called');
+                const checkRowOrColIsUndefined = row < 0 || row >= state.tableData.length || col < 0 || col >= state.tableData[0].length;
+                const isAlreadyOpenedOrMarked = [CODE.OPENED, CODE.FLAG, CODE.FLAG_MINE, CODE.QUESTION_MINE, CODE.QUESTION].includes(state.tableData[row][col]);
+                if (checkRowOrColIsUndefined) return;
+                if (isAlreadyOpenedOrMarked) return;
+                if (checked.includes(row + '/' + col)) return;
+                
+                checked.push(row + '/' + col);
+
                 let around = [];
                 for (let i = -1; i < 2; i++) {
                     for (let j = -1; j < 2; j++) {
@@ -100,13 +111,35 @@ export default new Vuex.Store({
                     }
                 ).length;
 
+                if (count === 0 && row > -1) {  // 주변칸에 지뢰가 하나도 없으면
+                    const near = [];
+                    if (row - 1 > -1) {
+                        near.push([row - 1, col - 1]);
+                        near.push([row - 1, col]);
+                        near.push([row - 1, col + 1]);
+                    }
+                    near.push([row, col - 1]);
+                    near.push([row, col + 1]);
+                    if (row + 1 < state.tableData.length) {
+                        near.push([row + 1, col - 1]);
+                        near.push([row + 1, col]);
+                        near.push([row + 1, col + 1]);
+                    }
+                    
+                    near.forEach((n) => {
+                        if (state.tableData[n[0]][n[1]] !== CODE.OPENED) {
+                            checkAround(n[0], n[1]);
+                        }
+                    })
+                }
+                Vue.set(state.tableData[row], col, count);
+
                 return count;
             };
 
             const count = checkAround();
             console.log(count);
 
-            Vue.set(state.tableData[row], col, count);
         },
         [CLICK_MINE] (state, {row, col}) {
             state.halted = true;
