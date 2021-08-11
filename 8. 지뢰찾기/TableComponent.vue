@@ -76,7 +76,7 @@ export default {
                 case CODE.MINE:
                     return this.$store.commit(CLICK_MINE, {row, col});
                 default:
-                    return this.$store.commit(OPEN_CELL, {row, col});
+                    return;
             }
         },
         onRightClickTd(row, col) {
