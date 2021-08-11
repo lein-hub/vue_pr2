@@ -82,6 +82,7 @@ export default new Vuex.Store({
             state.timer = 0;
             state.halted = false;
             state.openedCount = 0;
+            state.result = '';
         },
         [OPEN_CELL] (state, {row, col}) {
             const checked = [];
@@ -89,7 +90,7 @@ export default new Vuex.Store({
             function checkAround(row, col) {  // 주변 8칸 지뢰인지 검색
                 console.log('checkAround Called');
                 const checkRowOrColIsUndefined = row < 0 || row >= state.tableData.length || col < 0 || col >= state.tableData[0].length;
-                const isAlreadyOpenedOrMarked = [CODE.OPENED, CODE.FLAG, CODE.FLAG_MINE, CODE.QUESTION_MINE, CODE.QUESTION].includes(state.tableData[row][col]);
+                const isAlreadyOpenedOrMarked = ![CODE.NORMAL, CODE.MINE, CODE.CLICKED_MINE].includes(state.tableData[row][col]);
                 if (checkRowOrColIsUndefined) return;
                 if (isAlreadyOpenedOrMarked) return;
                 if (checked.includes(row + '/' + col)) return;
@@ -120,20 +121,6 @@ export default new Vuex.Store({
                 Vue.set(state.tableData[row], col, count);
 
                 if (count === 0 && row > -1) {  // 주변칸에 지뢰가 하나도 없으면
-                    // const near = [];
-                    // if (row - 1 > -1) {
-                    //     near.push([row - 1, col - 1]);
-                    //     near.push([row - 1, col]);
-                    //     near.push([row - 1, col + 1]);
-                    // }
-                    // near.push([row, col - 1]);
-                    // near.push([row, col + 1]);
-                    // if (row + 1 < state.tableData.length) {
-                    //     near.push([row + 1, col - 1]);
-                    //     near.push([row + 1, col]);
-                    //     near.push([row + 1, col + 1]);
-                    // }
-                    
                     around.forEach((n) => {
                         if (state.tableData[n.coordinates[0]][n.coordinates[1]] !== CODE.OPENED) {
                             checkAround(n.coordinates[0], n.coordinates[1]);
