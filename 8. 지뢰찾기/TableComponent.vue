@@ -7,6 +7,8 @@
                 :style="cellDataStyle(rowIndex, colIndex)" 
                 @click="onClickTd(rowIndex, colIndex)"
                 @contextmenu.prevent="onRightClickTd(rowIndex, colIndex)"
+                @mousedown="onMouseDown"
+                @mouseup="onMouseUp"
             >
                 {{cellDataText(rowIndex, colIndex)}}
             </td>
@@ -16,9 +18,15 @@
 
 <script>
 import { mapState } from 'vuex';
-import { CLICK_MINE, CODE,  FLAG_CELL,  NORMALIZE_CELL,  OPEN_CELL, QUESTION_CELL } from './store';
+import { CLICK_MINE, CODE,  CONFIRM_CELLS,  FLAG_CELL,  NORMALIZE_CELL,  OPEN_CELL, QUESTION_CELL } from './store';
+
+let mouseStack = 0;
 
 export default {
+    data() {
+        return {
+        }
+    },
     computed: {
         ...mapState(['tableData', 'halted']),
         cellDataStyle(state) {
@@ -80,9 +88,6 @@ export default {
             }
         },
         onRightClickTd(row, col) {
-            if (this.halted) {
-                return;
-            }
             switch (this.tableData[row][col]) {
                 case CODE.NORMAL:
                 case CODE.MINE:
@@ -97,6 +102,19 @@ export default {
                     this.$store.commit(NORMALIZE_CELL, {row, col});
                     return;
                 default:
+            }
+        },
+        onMouseDown() {
+            mouseStack++;
+            this.checkClick();
+        },
+        onMouseUp() {
+            mouseStack--;
+            this.checkClick();
+        },
+        checkClick() {
+            if (mouseStack === 2) {
+                this.$store.commit(CONFIRM_CELLS, {row, col});
             }
         }
     },

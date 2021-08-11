@@ -10,6 +10,7 @@ export const FLAG_CELL = 'FLAG_CELL';
 export const QUESTION_CELL = 'QUESTION_CELL';
 export const NORMALIZE_CELL = 'NORMALIZE_CELL';
 export const INCREMENT_TIMER = 'INCREMENT_TIMER';
+export const CONFIRM_CELLS = 'CONFIRM_CELLS';
 
 export const CODE = {
     MINE: -7,
@@ -167,6 +168,46 @@ export default new Vuex.Store({
             } else {
                 Vue.set(state.tableData[row], col, CODE.NORMAL);
             }
+        },
+        [CONFIRM_CELLS] (state, {row, col}) {
+            console.log('confirm');
+
+            let flagCount = 0;
+            for (let i = -1; i < 2; i++) {
+                for (let j = -1; j < 2; j++) {
+                    if (i === 0 && j === 0) {
+                        continue;
+                    }
+                    if (state.tableData[row + i] && 
+                        state.tableData[row + i][col + j] && 
+                        [CODE.FLAG, CODE.FLAG_MINE].includes(state.tableData[row + i][col + j])) {
+
+                        flagCount++;
+                    }
+                }
+            }
+
+            if (flagCount !== state.tableData[row][col]) return;
+
+            let around = [];
+            for (let i = -1; i < 2; i++) {
+                for (let j = -1; j < 2; j++) {
+                    if (i === 0 && j === 0) {
+                        continue;
+                    }
+                    if (state.tableData[row + i] && 
+                        state.tableData[row + i][col + j] && 
+                        ![CODE.NORMAL, CODE.MINE, CODE.CLICKED_MINE].includes(state.tableData[row + i][col + j])) {
+
+                        around = around.concat({
+                            code: state.tableData[row + i][col + j],
+                            coordinates: [row + i, col + j]
+                        });
+                    }
+                }
+            }
+
+            commit('OPEN_CELL', {row, col});
         },
         [INCREMENT_TIMER] (state) {
             state.timer++;
