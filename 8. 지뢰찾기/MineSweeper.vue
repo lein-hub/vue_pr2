@@ -1,7 +1,8 @@
 <template>
 <div>
     <mine-form></mine-form>
-    <div>{{timer}}</div>
+    <div>경과 시간: {{timer}} 초</div>
+    <div>남은 지뢰 수: {{data.mine - markedCount}}</div>
     <table-component></table-component>
     <div>{{result}}</div>
 </div>
@@ -22,7 +23,7 @@ export default {
         MineForm,
     },
     computed: {
-        ...mapState(['timer', 'result', 'halted']),
+        ...mapState(['timer', 'result', 'halted', 'data', 'markedCount']),
     },
     methods: {
         

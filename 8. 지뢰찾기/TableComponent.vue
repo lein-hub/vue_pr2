@@ -43,6 +43,11 @@ export default {
                             background: 'white'
                         };
                     case CODE.FLAG:
+                        if (this.halted) {
+                            return {
+                                background: 'lightgreen'
+                            }
+                        }
                     case CODE.FLAG_MINE:
                         return {
                             background: 'red'
@@ -61,8 +66,9 @@ export default {
             return function(row, cell) {
                 switch (this.$store.state.tableData[row][cell]) {
                     case CODE.NORMAL: return '';
-                    case CODE.MINE: return 'X';
-                    case CODE.FLAG:
+                    case CODE.MINE: if (this.halted) return 'X';
+                                    return '';
+                    case CODE.FLAG: 
                     case CODE.FLAG_MINE: return '!';
                     case CODE.QUESTION:
                     case CODE.QUESTION_MINE: return '?';
@@ -114,7 +120,7 @@ export default {
         },
         checkClick(row, col) {
             if (mouseStack === 2) {
-                this.$store.commit(CONFIRM_CELLS, {row, col});
+                return this.$store.commit(CONFIRM_CELLS, {row, col});
             }
         }
     },

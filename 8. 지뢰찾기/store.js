@@ -66,6 +66,7 @@ export default new Vuex.Store({
         timer: 0,
         result: '',
         openedCount: 0,
+        markedCount: 0,
     },
     getters: {  // $store.getters  // vue의 computed
         turnMessage(state) {
@@ -83,6 +84,7 @@ export default new Vuex.Store({
             state.timer = 0;
             state.halted = false;
             state.openedCount = 0;
+            state.markedCount = 0;
             state.result = '';
         },
         [OPEN_CELL] (state, {row, col}) {
@@ -154,6 +156,7 @@ export default new Vuex.Store({
             } else {
                 Vue.set(state.tableData[row], col, CODE.FLAG);
             }
+            state.markedCount++;
         },
         [QUESTION_CELL] (state, {row, col}) {
             if (state.tableData[row][col] === CODE.FLAG_MINE) {
@@ -168,33 +171,24 @@ export default new Vuex.Store({
             } else {
                 Vue.set(state.tableData[row], col, CODE.NORMAL);
             }
+            state.markedCount--;
         },
         [CONFIRM_CELLS] (state, {row, col}) {
             console.log('confirm');
 
             let flagCount = 0;
+            let around = [];
             for (let i = -1; i < 2; i++) {
                 for (let j = -1; j < 2; j++) {
-                    if (i === 0 && j === 0) {
-                        continue;
-                    }
+                    if (i === 0 && j === 0) continue;
+
                     if (state.tableData[row + i] && 
                         state.tableData[row + i][col + j] && 
                         [CODE.FLAG, CODE.FLAG_MINE].includes(state.tableData[row + i][col + j])) {
 
                         flagCount++;
                     }
-                }
-            }
-
-            if (flagCount !== state.tableData[row][col]) return;
-
-            let around = [];
-            for (let i = -1; i < 2; i++) {
-                for (let j = -1; j < 2; j++) {
-                    if (i === 0 && j === 0) {
-                        continue;
-                    }
+                    
                     if (state.tableData[row + i] && 
                         state.tableData[row + i][col + j] && 
                         [CODE.NORMAL, CODE.MINE, CODE.CLICKED_MINE].includes(state.tableData[row + i][col + j])) {
@@ -206,13 +200,21 @@ export default new Vuex.Store({
                 }
             }
 
-            around.forEach((n) => {
-                if (n.code === CODE.MINE) {
+            if (flagCount !== state.tableData[row][col]) return;
+
+            const filtered = around.filter((obj)=>{
+                return obj.code === CODE.MINE;
+            });
+
+            if (filtered.length >= 1) {
+                filtered.forEach((n) => {
                     this.commit('CLICK_MINE', {row: n.coordinates[0], col: n.coordinates[1]});
-                } else {
+                });
+            } else {
+                around.forEach((n) => {
                     this.commit('OPEN_CELL', {row: n.coordinates[0], col: n.coordinates[1]});
-                }
-            })
+                });
+            }
         },
         [INCREMENT_TIMER] (state) {
             state.timer++;
