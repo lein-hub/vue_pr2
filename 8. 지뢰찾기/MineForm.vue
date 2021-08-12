@@ -12,9 +12,9 @@ import { START_GAME } from './store';
 export default {
     data() {
         return {
-            row: 10,
-            col: 10,
-            mine: 20,
+            row: 16,
+            col: 16,
+            mine: 40,
         }
     },
     methods: {

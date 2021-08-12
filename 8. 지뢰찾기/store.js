@@ -197,17 +197,22 @@ export default new Vuex.Store({
                     }
                     if (state.tableData[row + i] && 
                         state.tableData[row + i][col + j] && 
-                        ![CODE.NORMAL, CODE.MINE, CODE.CLICKED_MINE].includes(state.tableData[row + i][col + j])) {
+                        [CODE.NORMAL, CODE.MINE, CODE.CLICKED_MINE].includes(state.tableData[row + i][col + j])) {
 
                         around = around.concat({
                             code: state.tableData[row + i][col + j],
-                            coordinates: [row + i, col + j]
-                        });
+                            coordinates: [row + i, col + j]});
                     }
                 }
             }
 
-            commit('OPEN_CELL', {row, col});
+            around.forEach((n) => {
+                if (n.code === CODE.MINE) {
+                    this.commit('CLICK_MINE', {row: n.coordinates[0], col: n.coordinates[1]});
+                } else {
+                    this.commit('OPEN_CELL', {row: n.coordinates[0], col: n.coordinates[1]});
+                }
+            })
         },
         [INCREMENT_TIMER] (state) {
             state.timer++;

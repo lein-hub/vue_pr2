@@ -7,8 +7,8 @@
                 :style="cellDataStyle(rowIndex, colIndex)" 
                 @click="onClickTd(rowIndex, colIndex)"
                 @contextmenu.prevent="onRightClickTd(rowIndex, colIndex)"
-                @mousedown="onMouseDown"
-                @mouseup="onMouseUp"
+                @mousedown="onMouseDown(rowIndex, colIndex)"
+                @mouseup="onMouseUp(rowIndex, colIndex)"
             >
                 {{cellDataText(rowIndex, colIndex)}}
             </td>
@@ -104,15 +104,15 @@ export default {
                 default:
             }
         },
-        onMouseDown() {
+        onMouseDown(row, col) {
             mouseStack++;
-            this.checkClick();
+            this.checkClick(row, col);
         },
-        onMouseUp() {
+        onMouseUp(row, col) {
             mouseStack--;
-            this.checkClick();
+            this.checkClick(row, col);
         },
-        checkClick() {
+        checkClick(row, col) {
             if (mouseStack === 2) {
                 this.$store.commit(CONFIRM_CELLS, {row, col});
             }
